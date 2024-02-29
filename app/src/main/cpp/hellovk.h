@@ -468,21 +468,67 @@ void HelloVK::render() {
  * getPrerotationMatrix handles screen rotation with 3 hardcoded rotation
  * matrices (detailed below). We skip the 180 degrees rotation.
  */
-void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
-                          const VkSurfaceTransformFlagBitsKHR &pretransformFlag,
-                          std::array<float, 16> &mat) {
-  // mat is initialized to the identity matrix
-  mat = {1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-  if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
-    // mat is set to a 90 deg rotation matrix
-    mat = {0., 1., 0., 0., -1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-  }
+// void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
+//                           const VkSurfaceTransformFlagBitsKHR &pretransformFlag,
+//                           std::array<float, 16> &mat) {
+//   // mat is initialized to the identity matrix
+//   mat = {1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+//   if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
+//     // mat is set to a 90 deg rotation matrix
+//     mat = {0., 1., 0., 0., -1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+//   }
 
-  else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
-    // mat is set to 270 deg rotation matrix
-    mat = {0., -1., 0., 0., 1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+//   else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
+//     // mat is set to 270 deg rotation matrix
+//     mat = {0., -1., 0., 0., 1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+//   }
+// }
+
+void getPrerotationMatrix(double angle, const VkSurfaceCapabilitiesKHR &capabilities, const VkSurfaceTransformFlagBitsKHR &pretransformFlag, std::array<float, 16> &mat) {
+    float x;
+    float y;
+    float z;
+
+    // if( normalize_axis ) {
+    //   Vector3 normalized = Normalize( axis );
+    //   x = normalized[0];
+    //   y = normalized[1];
+    //   z = normalized[2];
+    // } else {
+//      x = axis[0];
+//      y = axis[1];
+//      z = axis[2];
+    // }
+    x = 0.1f;
+    y = 0.1f;
+    z = 0.1f;
+
+    const float c = cos( angle );
+    const float _1_c = 1.0f - c;
+    const float s = sin( angle );
+
+    mat = {
+      x * x * _1_c + c,
+      y * x * _1_c - z * s,
+      z * x * _1_c + y * s,
+      0.0f,
+
+      x * y * _1_c + z * s,
+      y * y * _1_c + c,
+      z * y * _1_c - x * s,
+      0.0f,
+
+      x * z * _1_c - y * s,
+      y * z * _1_c + x * s,
+      z * z * _1_c + c,
+      0.0f,
+
+      0.0f,
+      0.0f,
+      0.0f,
+      1.0f
+    };
   }
-}
 
 void HelloVK::createDescriptorPool() {
   VkDescriptorPoolSize poolSize{};
@@ -533,7 +579,7 @@ void HelloVK::updateUniformBuffer(uint32_t currentImage) {
   SwapChainSupportDetails swapChainSupport =
       querySwapChainSupport(physicalDevice);
   UniformBufferObject ubo{};
-  getPrerotationMatrix(swapChainSupport.capabilities, pretransformFlag,
+  getPrerotationMatrix(0.2f, swapChainSupport.capabilities, pretransformFlag,
                        ubo.mvp);
   void *data;
   vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0,
@@ -579,7 +625,8 @@ void HelloVK::recordCommandBuffer(VkCommandBuffer commandBuffer,
   if (grey > 1.0f) {
     grey = 0.0f;
   }
-  VkClearValue clearColor = {{{grey, grey, grey, 1.0f}}};
+  // VkClearValue clearColor = {{{grey, grey, grey, 1.0f}}};
+  VkClearValue clearColor = {{{0.0f, 0.0f, 1.0f, 1.0f}}};
 
   renderPassInfo.clearValueCount = 1;
   renderPassInfo.pClearValues = &clearColor;
