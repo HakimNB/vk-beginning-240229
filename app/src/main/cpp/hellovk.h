@@ -31,6 +31,10 @@
 #include <vector>
 
 #include <cmath>
+
+#include "ktx.h"
+#include "ktxvulkan.h"
+
 /**
  * HelloVK contains the core of Vulkan pipeline setup. It includes recording
  * draw commands as well as screen clearing during the render pass.

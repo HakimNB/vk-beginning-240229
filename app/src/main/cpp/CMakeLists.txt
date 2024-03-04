@@ -17,6 +17,9 @@
 cmake_minimum_required(VERSION 3.18.1)
 project(hellovkjni)
 
+include_directories(external/ktx/include)
+include_directories(external/ktx/other_include)
+
 # Include the GameActivity static lib to the project.
 find_package(game-activity REQUIRED CONFIG)
 set(CMAKE_SHARED_LINKER_FLAGS
@@ -31,7 +34,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR=1)
 
 add_library(${PROJECT_NAME} SHARED
-    VulkanTexture.cpp
     vk_main.cpp)
 
 # add lib dependencies
