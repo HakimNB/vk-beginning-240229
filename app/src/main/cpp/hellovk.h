@@ -32,9 +32,6 @@
 
 #include <cmath>
 
-#include "ktx.h"
-#include "ktxvulkan.h"
-
 /**
  * HelloVK contains the core of Vulkan pipeline setup. It includes recording
  * draw commands as well as screen clearing during the render pass.
@@ -225,6 +222,8 @@ class HelloVK {
   void createDescriptorSets();
   void establishDisplaySizeIdentity();
 
+  void loadTexture();
+
   /*
    * In order to enable validation layer toggle this to true and
    * follow the README.md instructions concerning the validation
@@ -285,6 +284,7 @@ class HelloVK {
 void HelloVK::initVulkan() {
   createInstance();
   createSurface();
+  loadTexture();
   pickPhysicalDevice();
   createLogicalDeviceAndQueue();
   setupDebugMessenger();

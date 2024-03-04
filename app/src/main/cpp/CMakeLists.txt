@@ -17,8 +17,27 @@
 cmake_minimum_required(VERSION 3.18.1)
 project(hellovkjni)
 
-include_directories(external/ktx/include)
-include_directories(external/ktx/other_include)
+set(KTX_DIR external/ktx)
+set(KTX_SOURCES
+        ${KTX_DIR}/lib/texture.c
+        ${KTX_DIR}/lib/hashlist.c
+        ${KTX_DIR}/lib/checkheader.c
+        ${KTX_DIR}/lib/swap.c
+        ${KTX_DIR}/lib/memstream.c
+        ${KTX_DIR}/lib/filestream.c
+)
+set(KTX_INCLUDE
+        ${KTX_DIR}/include
+        ${KTX_DIR}/lib
+        ${KTX_DIR}/other_include
+)
+
+add_library(libktx ${KTX_SOURCES})
+target_include_directories(libktx PUBLIC ${KTX_INCLUDE})
+set_property(TARGET libktx PROPERTY FOLDER "external")
+
+#include_directories(external/ktx/include)
+#include_directories(external/ktx/other_include)
 
 # Include the GameActivity static lib to the project.
 find_package(game-activity REQUIRED CONFIG)
@@ -41,4 +60,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     vulkan
     game-activity::game-activity_static
     android
-    log)
+    log
+    libktx
+)
