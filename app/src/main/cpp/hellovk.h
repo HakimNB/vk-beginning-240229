@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+#include <cmath>
 /**
  * HelloVK contains the core of Vulkan pipeline setup. It includes recording
  * draw commands as well as screen clearing during the render pass.
@@ -484,30 +485,42 @@ void HelloVK::render() {
 //   }
 // }
 
-void getPrerotationMatrix(double angle, const VkSurfaceCapabilitiesKHR &capabilities, const VkSurfaceTransformFlagBitsKHR &pretransformFlag, std::array<float, 16> &mat) {
+float Deg2Rad( float value ) {
+  return value * 0.01745329251994329576923690768489f;
+}
+
+std::array<float,3> Normalize( std::array<float,3> const & vector ) {
+  float length = std::sqrt( vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2] );
+  return {
+    vector[0] / length,
+    vector[1] / length,
+    vector[2] / length
+  };
+}
+
+std::array<float, 16> PrepareRotationMatrix( float           angle,
+                                   std::array<float, 3> const & axis,
+                                   float           normalize_axis ) {
     float x;
     float y;
     float z;
 
-    // if( normalize_axis ) {
-    //   Vector3 normalized = Normalize( axis );
-    //   x = normalized[0];
-    //   y = normalized[1];
-    //   z = normalized[2];
-    // } else {
-//      x = axis[0];
-//      y = axis[1];
-//      z = axis[2];
-    // }
-    x = 0.1f;
-    y = 0.1f;
-    z = 0.1f;
+    if( normalize_axis ) {
+      std::array<float, 3> normalized = Normalize( axis );
+      x = normalized[0];
+      y = normalized[1];
+      z = normalized[2];
+    } else {
+      x = axis[0];
+      y = axis[1];
+      z = axis[2];
+    }
 
-    const float c = cos( angle );
+    const float c = cos( Deg2Rad( angle ) );
     const float _1_c = 1.0f - c;
-    const float s = sin( angle );
+    const float s = sin( Deg2Rad( angle ) );
 
-    mat = {
+    std::array<float, 16> rotation_matrix = {
       x * x * _1_c + c,
       y * x * _1_c - z * s,
       z * x * _1_c + y * s,
@@ -528,6 +541,14 @@ void getPrerotationMatrix(double angle, const VkSurfaceCapabilitiesKHR &capabili
       0.0f,
       1.0f
     };
+    return rotation_matrix;
+  }
+
+void getPrerotationMatrix(double angle, const VkSurfaceCapabilitiesKHR &capabilities, const VkSurfaceTransformFlagBitsKHR &pretransformFlag, std::array<float, 16> &mat) {
+
+  std::array<float, 3> axis = {0.0f, 0.0f, 1.0f};
+  mat = PrepareRotationMatrix(angle, axis, 1.0f);
+
   }
 
 void HelloVK::createDescriptorPool() {
@@ -579,7 +600,12 @@ void HelloVK::updateUniformBuffer(uint32_t currentImage) {
   SwapChainSupportDetails swapChainSupport =
       querySwapChainSupport(physicalDevice);
   UniformBufferObject ubo{};
-  getPrerotationMatrix(0.2f, swapChainSupport.capabilities, pretransformFlag,
+  static int angle = 0;
+  angle++;
+  if ( angle >= 360 ) {
+    angle = 0;
+  }
+  getPrerotationMatrix(angle, swapChainSupport.capabilities, pretransformFlag,
                        ubo.mvp);
   void *data;
   vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0,
