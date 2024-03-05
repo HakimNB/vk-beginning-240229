@@ -199,6 +199,7 @@ class HelloVK {
   void createSwapChain();
   void createImageViews();
   void createTextureImage();
+  void decodeImage();
   void createTextureImageViews();
   void createTextureSampler();
   void copyBufferToImage();
@@ -285,7 +286,7 @@ class HelloVK {
 
   VkBuffer stagingBuffer;
   VkDeviceMemory stagingMemory;
-  uint32_t textureWidth, textureHeight, textureChannels;
+  int textureWidth, textureHeight, textureChannels;
   VkImage textureImage;
   VkDeviceMemory textureImageMemory;
   VkImageView textureImageView;
@@ -1120,8 +1121,10 @@ void HelloVK::createTextureImage() {
 
   VK_CHECK(vkCreateImage(device, &imageInfo, nullptr, &textureImage));
 
+  VkMemoryRequirements memRequirements;
   vkGetImageMemoryRequirements(device, textureImage, &memRequirements);
 
+  VkMemoryAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
   allocInfo.allocationSize = memRequirements.size;
   allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits,
