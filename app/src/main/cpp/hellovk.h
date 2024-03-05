@@ -1122,12 +1122,10 @@ void HelloVK::createTextureImage() {
   VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &textureImageMemory));
 
   vkBindImageMemory(device, textureImage, textureImageMemory, 0);
-
-  copyBufferToImage();
 }
 
 void HelloVK::decodeImage() {
-  std::vector<uint8_t> imageData = LoadBinaryFileToVector("Capture.png",
+  std::vector<uint8_t> imageData = LoadBinaryFileToVector("new_texture_captured.png",
                                                           assetManager);
   if (imageData.size() == 0) {
       LOGE("Fail to load image.");
