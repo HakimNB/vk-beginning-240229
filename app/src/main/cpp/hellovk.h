@@ -284,6 +284,7 @@ class HelloVK {
 void HelloVK::initVulkan() {
   createInstance();
   createSurface();
+  loadTexture();
   pickPhysicalDevice();
   createLogicalDeviceAndQueue();
   setupDebugMessenger();
