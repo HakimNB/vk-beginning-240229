@@ -312,8 +312,8 @@ void HelloVK::initVulkan() {
   createFramebuffers();
   createCommandPool();
   createCommandBuffer();
-  createTextureImage();
   decodeImage();
+  createTextureImage();
   copyBufferToImage();
   createTextureImageViews();
   createTextureSampler();
@@ -509,15 +509,6 @@ void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
                           glm::mat4 &mat, float ratio) {
   // mat is initialized to the identity matrix
   mat = glm::mat4(1.0f);
-  
-  if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
-    // mat is set to a 90 deg rotation matrix around Z axis
-    mat = glm::rotate(mat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  }
-  else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
-    // mat is set to 270 deg rotation matrix around Z axis
-    mat = glm::rotate(mat, glm::radians(270.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  }
 
   // scale by screen ratio
   mat = glm::scale(mat, glm::vec3(1.0f, ratio, 1.0f));
@@ -1101,8 +1092,6 @@ void HelloVK::createImageViews() {
 }
 
 void HelloVK::createTextureImage() {
-  decodeImage();
-
   VkImageCreateInfo imageInfo{};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
   imageInfo.imageType = VK_IMAGE_TYPE_2D;
