@@ -510,14 +510,14 @@ void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
   // mat is initialized to the identity matrix
   mat = glm::mat4(1.0f);
   
-  if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
-    // mat is set to a 90 deg rotation matrix around Z axis
-    mat = glm::rotate(mat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  }
-  else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
-    // mat is set to 270 deg rotation matrix around Z axis
-    mat = glm::rotate(mat, glm::radians(270.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  }
+  // if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
+  //   // mat is set to a 90 deg rotation matrix around Z axis
+  //   mat = glm::rotate(mat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  // }
+  // else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
+  //   // mat is set to 270 deg rotation matrix around Z axis
+  //   mat = glm::rotate(mat, glm::radians(270.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  // }
 
   // scale by screen ratio
   mat = glm::scale(mat, glm::vec3(1.0f, ratio, 1.0f));
@@ -525,6 +525,9 @@ void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
   // rotate 1 degree every function call.
   static float currentAngleDegrees = 0.0f;
   currentAngleDegrees += 1.0f;
+  if ( currentAngleDegrees >= 360.0f ) {
+    currentAngleDegrees = 0.0f;
+  }
   mat = glm::rotate(mat, glm::radians(currentAngleDegrees), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
