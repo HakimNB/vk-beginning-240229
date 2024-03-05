@@ -47,13 +47,20 @@ set(CMAKE_SHARED_LINKER_FLAGS
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+file(GLOB BASE_SRC "base/*.cpp")
+add_library(libbase SHARED ${BASE_SRC})
+include_directories(${BASE_DIR})
+add_subdirectory(base)
+
 # Now build app's shared lib
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 
 add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR=1)
 
 add_library(${PROJECT_NAME} SHARED
-    vk_main.cpp)
+    #vk_main.cpp
+    texture.cpp
+)
 
 # add lib dependencies
 target_link_libraries(${PROJECT_NAME} PUBLIC
@@ -61,5 +68,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     game-activity::game-activity_static
     android
     log
+    libbase
     libktx
 )
