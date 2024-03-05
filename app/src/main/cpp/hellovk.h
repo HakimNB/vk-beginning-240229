@@ -201,6 +201,7 @@ class HelloVK {
   void createTextureImage();
   void createTextureImageViews();
   void createTextureSampler();
+  void decodeImage();
   void copyBufferToImage();
   void createRenderPass();
   void createDescriptorSetLayout();
@@ -1120,8 +1121,10 @@ void HelloVK::createTextureImage() {
 
   VK_CHECK(vkCreateImage(device, &imageInfo, nullptr, &textureImage));
 
+  VkMemoryRequirements memRequirements;
   vkGetImageMemoryRequirements(device, textureImage, &memRequirements);
 
+  VkMemoryAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
   allocInfo.allocationSize = memRequirements.size;
   allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits,
@@ -1142,13 +1145,17 @@ void HelloVK::decodeImage() {
       return;
   }
 
+  int iWidth, iHeight, iChannels;
   unsigned char* decodedData = stbi_load_from_memory(imageData.data(),
-      imageData.size(), &textureWidth, &textureHeight, &textureChannels, 0);
+      imageData.size(), &iWidth, &iHeight, &iChannels, 0);
   if (decodedData == nullptr) {
       LOGE("Fail to load image to memory, %s", stbi_failure_reason());
       return;
   }
 
+  textureWidth = iWidth;
+  textureHeight = iHeight;
+  textureChannels = iChannels;
   size_t imageSize = textureWidth * textureHeight * textureChannels;
 
   VkBufferCreateInfo createInfo{};
