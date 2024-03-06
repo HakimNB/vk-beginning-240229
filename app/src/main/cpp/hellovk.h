@@ -1125,7 +1125,7 @@ void HelloVK::createTextureImage() {
 }
 
 void HelloVK::decodeImage() {
-  std::vector<uint8_t> imageData = LoadBinaryFileToVector("new_texture_captured.png",
+  std::vector<uint8_t> imageData = LoadBinaryFileToVector("texture.png",
                                                           assetManager);
   if (imageData.size() == 0) {
       LOGE("Fail to load image.");
