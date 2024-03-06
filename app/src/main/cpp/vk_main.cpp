@@ -146,6 +146,5 @@ void android_main(struct android_app *state) {
 
     HandleInputEvents(state);
 
-//    engine.app_backend->render();
   }
 }
