@@ -177,9 +177,9 @@ class HelloVK {
  public:
   void initVulkan();
   // void render();
-  // void cleanup();
-  // void cleanupSwapChain();
-  // void reset(ANativeWindow *newWindow, AAssetManager *newManager);
+  void cleanup();
+  void cleanupSwapChain();
+  void reset(ANativeWindow *newWindow, AAssetManager *newManager);
   bool initialized = false;
 
  private:
@@ -207,7 +207,7 @@ class HelloVK {
   // VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
   // VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
   // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-  // void recreateSwapChain();
+  void recreateSwapChain();
   // void onOrientationChange();
   // uint32_t findMemoryType(uint32_t typeFilter,
   //                         VkMemoryPropertyFlags properties);
@@ -382,22 +382,22 @@ void HelloVK::initVulkan() {
 //                                        &descriptorSetLayout));
 // }
 
-// void HelloVK::reset(ANativeWindow *newWindow, AAssetManager *newManager) {
-//   window.reset(newWindow);
-//   assetManager = newManager;
-//   if (initialized) {
-//     createSurface();
-//     recreateSwapChain();
-//   }
-// }
+void HelloVK::reset(ANativeWindow *newWindow, AAssetManager *newManager) {
+  window.reset(newWindow);
+  assetManager = newManager;
+  if (initialized) {
+    createSurface();
+    recreateSwapChain();
+  }
+}
 
-// void HelloVK::recreateSwapChain() {
-//   vkDeviceWaitIdle(device);
-//   cleanupSwapChain();
-//   createSwapChain();
-//   createImageViews();
-//   createFramebuffers();
-// }
+void HelloVK::recreateSwapChain() {
+  vkDeviceWaitIdle(device);
+  cleanupSwapChain();
+  createSwapChain();
+  createImageViews();
+  createFramebuffers();
+}
 
 // void HelloVK::render() {
 //   if (orientationChanged) {
@@ -591,17 +591,17 @@ void HelloVK::initVulkan() {
 //   VK_CHECK(vkEndCommandBuffer(commandBuffer));
 // }
 
-// void HelloVK::cleanupSwapChain() {
-//   for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
-//     vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
-//   }
+void HelloVK::cleanupSwapChain() {
+  for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+    vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
+  }
 
-//   for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-//     vkDestroyImageView(device, swapChainImageViews[i], nullptr);
-//   }
+  for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+    vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+  }
 
-//   vkDestroySwapchainKHR(device, swapChain, nullptr);
-// }
+  vkDestroySwapchainKHR(device, swapChain, nullptr);
+}
 
 // void HelloVK::cleanup() {
 //   vkDeviceWaitIdle(device);
