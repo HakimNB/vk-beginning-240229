@@ -176,7 +176,7 @@ static void DestroyDebugUtilsMessengerEXT(
 class HelloVK {
  public:
   void initVulkan();
-  // void render();
+  void render();
   void cleanup();
   void cleanupSwapChain();
   void reset(ANativeWindow *newWindow, AAssetManager *newManager);
@@ -206,16 +206,16 @@ class HelloVK {
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
   // VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
   VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
-  // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+  void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
   void recreateSwapChain();
-  // void onOrientationChange();
+  void onOrientationChange();
   uint32_t findMemoryType(uint32_t typeFilter,
                           VkMemoryPropertyFlags properties);
   void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
                     VkMemoryPropertyFlags properties, VkBuffer &buffer,
                     VkDeviceMemory &bufferMemory);
   void createUniformBuffers();
-  // void updateUniformBuffer(uint32_t currentImage);
+  void updateUniformBuffer(uint32_t currentImage);
   void createDescriptorPool();
   void createDescriptorSets();
   void establishDisplaySizeIdentity();
@@ -272,8 +272,8 @@ class HelloVK {
   VkDescriptorPool descriptorPool;
   std::vector<VkDescriptorSet> descriptorSets;
 
-  // uint32_t currentFrame = 0;
-  // bool orientationChanged = false;
+  uint32_t currentFrame = 0;
+  bool orientationChanged = false;
   VkSurfaceTransformFlagBitsKHR pretransformFlag;
 };
 
@@ -396,93 +396,93 @@ void HelloVK::recreateSwapChain() {
   cleanupSwapChain();
   createSwapChain();
   createImageViews();
-  // createFramebuffers();
+  createFramebuffers();
 }
 
-// void HelloVK::render() {
-//   if (orientationChanged) {
-//     onOrientationChange();
-//   }
+void HelloVK::render() {
+  if (orientationChanged) {
+    onOrientationChange();
+  }
 
-//   vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE,
-//                   UINT64_MAX);
-//   uint32_t imageIndex;
-//   VkResult result = vkAcquireNextImageKHR(
-//       device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame],
-//       VK_NULL_HANDLE, &imageIndex);
-//   if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-//     recreateSwapChain();
-//     return;
-//   }
-//   assert(result == VK_SUCCESS ||
-//          result == VK_SUBOPTIMAL_KHR);  // failed to acquire swap chain image
-//   updateUniformBuffer(currentFrame);
+  vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE,
+                  UINT64_MAX);
+  uint32_t imageIndex;
+  VkResult result = vkAcquireNextImageKHR(
+      device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame],
+      VK_NULL_HANDLE, &imageIndex);
+  if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+    recreateSwapChain();
+    return;
+  }
+  assert(result == VK_SUCCESS ||
+         result == VK_SUBOPTIMAL_KHR);  // failed to acquire swap chain image
+  updateUniformBuffer(currentFrame);
 
-//   vkResetFences(device, 1, &inFlightFences[currentFrame]);
-//   vkResetCommandBuffer(commandBuffers[currentFrame], 0);
+  vkResetFences(device, 1, &inFlightFences[currentFrame]);
+  vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 
-//   recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
+  recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
 
-//   VkSubmitInfo submitInfo{};
-//   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  VkSubmitInfo submitInfo{};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-//   VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
-//   VkPipelineStageFlags waitStages[] = {
-//       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-//   submitInfo.waitSemaphoreCount = 1;
-//   submitInfo.pWaitSemaphores = waitSemaphores;
-//   submitInfo.pWaitDstStageMask = waitStages;
-//   submitInfo.commandBufferCount = 1;
-//   submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
-//   VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
-//   submitInfo.signalSemaphoreCount = 1;
-//   submitInfo.pSignalSemaphores = signalSemaphores;
+  VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
+  VkPipelineStageFlags waitStages[] = {
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.pWaitSemaphores = waitSemaphores;
+  submitInfo.pWaitDstStageMask = waitStages;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
+  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
+  submitInfo.signalSemaphoreCount = 1;
+  submitInfo.pSignalSemaphores = signalSemaphores;
 
-//   VK_CHECK(vkQueueSubmit(graphicsQueue, 1, &submitInfo,
-//                          inFlightFences[currentFrame]));
+  VK_CHECK(vkQueueSubmit(graphicsQueue, 1, &submitInfo,
+                         inFlightFences[currentFrame]));
 
-//   VkPresentInfoKHR presentInfo{};
-//   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  VkPresentInfoKHR presentInfo{};
+  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
-//   presentInfo.waitSemaphoreCount = 1;
-//   presentInfo.pWaitSemaphores = signalSemaphores;
+  presentInfo.waitSemaphoreCount = 1;
+  presentInfo.pWaitSemaphores = signalSemaphores;
 
-//   VkSwapchainKHR swapChains[] = {swapChain};
-//   presentInfo.swapchainCount = 1;
-//   presentInfo.pSwapchains = swapChains;
-//   presentInfo.pImageIndices = &imageIndex;
-//   presentInfo.pResults = nullptr;
+  VkSwapchainKHR swapChains[] = {swapChain};
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = swapChains;
+  presentInfo.pImageIndices = &imageIndex;
+  presentInfo.pResults = nullptr;
 
-//   result = vkQueuePresentKHR(presentQueue, &presentInfo);
-//   if (result == VK_SUBOPTIMAL_KHR) {
-//     orientationChanged = true;
-//   } else if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-//     recreateSwapChain();
-//   } else {
-//     assert(result == VK_SUCCESS);  // failed to present swap chain image!
-//   }
-//   currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-// }
+  result = vkQueuePresentKHR(presentQueue, &presentInfo);
+  if (result == VK_SUBOPTIMAL_KHR) {
+    orientationChanged = true;
+  } else if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+    recreateSwapChain();
+  } else {
+    assert(result == VK_SUCCESS);  // failed to present swap chain image!
+  }
+  currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+}
 
 /*
  * getPrerotationMatrix handles screen rotation with 3 hardcoded rotation
  * matrices (detailed below). We skip the 180 degrees rotation.
  */
-// void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
-//                           const VkSurfaceTransformFlagBitsKHR &pretransformFlag,
-//                           std::array<float, 16> &mat) {
-//   // mat is initialized to the identity matrix
-//   mat = {1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-//   if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
-//     // mat is set to a 90 deg rotation matrix
-//     mat = {0., 1., 0., 0., -1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-//   }
+void getPrerotationMatrix(const VkSurfaceCapabilitiesKHR &capabilities,
+                          const VkSurfaceTransformFlagBitsKHR &pretransformFlag,
+                          std::array<float, 16> &mat) {
+  // mat is initialized to the identity matrix
+  mat = {1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+  if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
+    // mat is set to a 90 deg rotation matrix
+    mat = {0., 1., 0., 0., -1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+  }
 
-//   else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
-//     // mat is set to 270 deg rotation matrix
-//     mat = {0., -1., 0., 0., 1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-//   }
-// }
+  else if (pretransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
+    // mat is set to 270 deg rotation matrix
+    mat = {0., -1., 0., 0., 1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
+  }
+}
 
 void HelloVK::createDescriptorPool() {
   VkDescriptorPoolSize poolSize{};
@@ -529,67 +529,67 @@ void HelloVK::createDescriptorSets() {
   }
 }
 
-// void HelloVK::updateUniformBuffer(uint32_t currentImage) {
-//   SwapChainSupportDetails swapChainSupport =
-//       querySwapChainSupport(physicalDevice);
-//   UniformBufferObject ubo{};
-//   getPrerotationMatrix(swapChainSupport.capabilities, pretransformFlag,
-//                        ubo.mvp);
-//   void *data;
-//   vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0,
-//               &data);
-//   memcpy(data, &ubo, sizeof(ubo));
-//   vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
-// }
+void HelloVK::updateUniformBuffer(uint32_t currentImage) {
+  SwapChainSupportDetails swapChainSupport =
+      querySwapChainSupport(physicalDevice);
+  UniformBufferObject ubo{};
+  getPrerotationMatrix(swapChainSupport.capabilities, pretransformFlag,
+                       ubo.mvp);
+  void *data;
+  vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0,
+              &data);
+  memcpy(data, &ubo, sizeof(ubo));
+  vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
+}
 
-// void HelloVK::onOrientationChange() {
-//   recreateSwapChain();
-//   orientationChanged = false;
-// }
+void HelloVK::onOrientationChange() {
+  recreateSwapChain();
+  orientationChanged = false;
+}
 
-// void HelloVK::recordCommandBuffer(VkCommandBuffer commandBuffer,
-//                                   uint32_t imageIndex) {
-//   VkCommandBufferBeginInfo beginInfo{};
-//   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-//   beginInfo.flags = 0;
-//   beginInfo.pInheritanceInfo = nullptr;
+void HelloVK::recordCommandBuffer(VkCommandBuffer commandBuffer,
+                                  uint32_t imageIndex) {
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = 0;
+  beginInfo.pInheritanceInfo = nullptr;
 
-//   VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+  VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
-//   VkRenderPassBeginInfo renderPassInfo{};
-//   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-//   renderPassInfo.renderPass = renderPass;
-//   renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
-//   renderPassInfo.renderArea.offset = {0, 0};
-//   renderPassInfo.renderArea.extent = swapChainExtent;
+  VkRenderPassBeginInfo renderPassInfo{};
+  renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  renderPassInfo.renderPass = renderPass;
+  renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
+  renderPassInfo.renderArea.offset = {0, 0};
+  renderPassInfo.renderArea.extent = swapChainExtent;
 
-//   VkViewport viewport{};
-//   viewport.width = (float)swapChainExtent.width;
-//   viewport.height = (float)swapChainExtent.height;
-//   viewport.minDepth = 0.0f;
-//   viewport.maxDepth = 1.0f;
-//   vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+  VkViewport viewport{};
+  viewport.width = (float)swapChainExtent.width;
+  viewport.height = (float)swapChainExtent.height;
+  viewport.minDepth = 0.0f;
+  viewport.maxDepth = 1.0f;
+  vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-//   VkRect2D scissor{};
-//   scissor.extent = swapChainExtent;
-//   vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+  VkRect2D scissor{};
+  scissor.extent = swapChainExtent;
+  vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-//   VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+  VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
 
-//   renderPassInfo.clearValueCount = 1;
-//   renderPassInfo.pClearValues = &clearColor;
-//   vkCmdBeginRenderPass(commandBuffer, &renderPassInfo,
-//                        VK_SUBPASS_CONTENTS_INLINE);
-//   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-//                     graphicsPipeline);
-//   vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-//                           pipelineLayout, 0, 1, &descriptorSets[currentFrame],
-//                           0, nullptr);
+  renderPassInfo.clearValueCount = 1;
+  renderPassInfo.pClearValues = &clearColor;
+  vkCmdBeginRenderPass(commandBuffer, &renderPassInfo,
+                       VK_SUBPASS_CONTENTS_INLINE);
+  vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    graphicsPipeline);
+  vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                          pipelineLayout, 0, 1, &descriptorSets[currentFrame],
+                          0, nullptr);
 
-//   vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-//   vkCmdEndRenderPass(commandBuffer);
-//   VK_CHECK(vkEndCommandBuffer(commandBuffer));
-// }
+  vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+  vkCmdEndRenderPass(commandBuffer);
+  VK_CHECK(vkEndCommandBuffer(commandBuffer));
+}
 
 void HelloVK::cleanupSwapChain() {
   for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
@@ -603,35 +603,35 @@ void HelloVK::cleanupSwapChain() {
   vkDestroySwapchainKHR(device, swapChain, nullptr);
 }
 
-// void HelloVK::cleanup() {
-//   vkDeviceWaitIdle(device);
-//   cleanupSwapChain();
-//   vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+void HelloVK::cleanup() {
+  vkDeviceWaitIdle(device);
+  cleanupSwapChain();
+  vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 
-//   vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
+  vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
-//   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-//     vkDestroyBuffer(device, uniformBuffers[i], nullptr);
-//     vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
-//   }
+  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    vkDestroyBuffer(device, uniformBuffers[i], nullptr);
+    vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
+  }
 
-//   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-//     vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
-//     vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
-//     vkDestroyFence(device, inFlightFences[i], nullptr);
-//   }
-//   vkDestroyCommandPool(device, commandPool, nullptr);
-//   vkDestroyPipeline(device, graphicsPipeline, nullptr);
-//   vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-//   vkDestroyRenderPass(device, renderPass, nullptr);
-//   vkDestroyDevice(device, nullptr);
-//   if (enableValidationLayers) {
-//     DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-//   }
-//   vkDestroySurfaceKHR(instance, surface, nullptr);
-//   vkDestroyInstance(instance, nullptr);
-//   initialized = false;
-// }
+  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
+    vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
+    vkDestroyFence(device, inFlightFences[i], nullptr);
+  }
+  vkDestroyCommandPool(device, commandPool, nullptr);
+  vkDestroyPipeline(device, graphicsPipeline, nullptr);
+  vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+  vkDestroyRenderPass(device, renderPass, nullptr);
+  vkDestroyDevice(device, nullptr);
+  if (enableValidationLayers) {
+    DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+  }
+  vkDestroySurfaceKHR(instance, surface, nullptr);
+  vkDestroyInstance(instance, nullptr);
+  initialized = false;
+}
 
 void HelloVK::setupDebugMessenger() {
   if (!enableValidationLayers) {
