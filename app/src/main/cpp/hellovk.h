@@ -51,7 +51,7 @@ namespace vkt {
     }                                         \
   } while (0)
 
-// const int MAX_FRAMES_IN_FLIGHT = 2;
+const int MAX_FRAMES_IN_FLIGHT = 2;
 
 // struct UniformBufferObject {
 //   std::array<float, 16> mvp;
@@ -177,9 +177,9 @@ class HelloVK {
  public:
   void initVulkan();
   // void render();
-  // void cleanup();
-  // void cleanupSwapChain();
-  // void reset(ANativeWindow *newWindow, AAssetManager *newManager);
+  void cleanup();
+  void cleanupSwapChain();
+  void reset(ANativeWindow *newWindow, AAssetManager *newManager);
   bool initialized = false;
 
  private:
@@ -189,7 +189,7 @@ class HelloVK {
   void setupDebugMessenger();
   void pickPhysicalDevice();
   void createLogicalDeviceAndQueue();
-  // void createSwapChain();
+  void createSwapChain();
   // void createImageViews();
   // void createRenderPass();
   // void createDescriptorSetLayout();
@@ -197,7 +197,7 @@ class HelloVK {
   // void createFramebuffers();
   // void createCommandPool();
   // void createCommandBuffer();
-  // void createSyncObjects();
+  void createSyncObjects();
   QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
   bool checkDeviceExtensionSupport(VkPhysicalDevice device);
   bool isDeviceSuitable(VkPhysicalDevice device);
@@ -207,7 +207,7 @@ class HelloVK {
   // VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
   // VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
   // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-  // void recreateSwapChain();
+  void recreateSwapChain();
   // void onOrientationChange();
   // uint32_t findMemoryType(uint32_t typeFilter,
   //                         VkMemoryPropertyFlags properties);
@@ -245,10 +245,10 @@ class HelloVK {
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
   VkDevice device;
 
-  // VkSwapchainKHR swapChain;
-  // std::vector<VkImage> swapChainImages;
-  // VkFormat swapChainImageFormat;
-  // VkExtent2D swapChainExtent;
+  VkSwapchainKHR swapChain;
+  std::vector<VkImage> swapChainImages;
+  VkFormat swapChainImageFormat;
+  VkExtent2D swapChainExtent;
   VkExtent2D displaySizeIdentity;
   // std::vector<VkImageView> swapChainImageViews;
   // std::vector<VkFramebuffer> swapChainFramebuffers;
@@ -266,15 +266,15 @@ class HelloVK {
   // std::vector<VkBuffer> uniformBuffers;
   // std::vector<VkDeviceMemory> uniformBuffersMemory;
 
-  // std::vector<VkSemaphore> imageAvailableSemaphores;
-  // std::vector<VkSemaphore> renderFinishedSemaphores;
-  // std::vector<VkFence> inFlightFences;
+  std::vector<VkSemaphore> imageAvailableSemaphores;
+  std::vector<VkSemaphore> renderFinishedSemaphores;
+  std::vector<VkFence> inFlightFences;
   // VkDescriptorPool descriptorPool;
   // std::vector<VkDescriptorSet> descriptorSets;
 
   // uint32_t currentFrame = 0;
   // bool orientationChanged = false;
-  // VkSurfaceTransformFlagBitsKHR pretransformFlag;
+  VkSurfaceTransformFlagBitsKHR pretransformFlag;
 };
 
 void HelloVK::initVulkan() {
@@ -284,7 +284,7 @@ void HelloVK::initVulkan() {
   createLogicalDeviceAndQueue();
   setupDebugMessenger();
   establishDisplaySizeIdentity();
-//   createSwapChain();
+  createSwapChain();
 //   createImageViews();
 //   createRenderPass();
 //   createDescriptorSetLayout();
@@ -295,7 +295,7 @@ void HelloVK::initVulkan() {
 //   createFramebuffers();
 //   createCommandPool();
 //   createCommandBuffer();
-//   createSyncObjects();
+  createSyncObjects();
   initialized = true;
 }
 
@@ -382,22 +382,22 @@ void HelloVK::initVulkan() {
 //                                        &descriptorSetLayout));
 // }
 
-// void HelloVK::reset(ANativeWindow *newWindow, AAssetManager *newManager) {
-//   window.reset(newWindow);
-//   assetManager = newManager;
-//   if (initialized) {
-//     createSurface();
-//     recreateSwapChain();
-//   }
-// }
+void HelloVK::reset(ANativeWindow *newWindow, AAssetManager *newManager) {
+  window.reset(newWindow);
+  assetManager = newManager;
+  if (initialized) {
+    createSurface();
+    recreateSwapChain();
+  }
+}
 
-// void HelloVK::recreateSwapChain() {
-//   vkDeviceWaitIdle(device);
-//   cleanupSwapChain();
-//   createSwapChain();
-//   createImageViews();
-//   createFramebuffers();
-// }
+void HelloVK::recreateSwapChain() {
+  vkDeviceWaitIdle(device);
+  cleanupSwapChain();
+  createSwapChain();
+  // createImageViews();
+  // createFramebuffers();
+}
 
 // void HelloVK::render() {
 //   if (orientationChanged) {
@@ -591,17 +591,17 @@ void HelloVK::initVulkan() {
 //   VK_CHECK(vkEndCommandBuffer(commandBuffer));
 // }
 
-// void HelloVK::cleanupSwapChain() {
-//   for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
-//     vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
-//   }
+void HelloVK::cleanupSwapChain() {
+  // for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+  //   vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
+  // }
 
-//   for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-//     vkDestroyImageView(device, swapChainImageViews[i], nullptr);
-//   }
+  // for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+  //   vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+  // }
 
-//   vkDestroySwapchainKHR(device, swapChain, nullptr);
-// }
+  // vkDestroySwapchainKHR(device, swapChain, nullptr);
+}
 
 // void HelloVK::cleanup() {
 //   vkDeviceWaitIdle(device);
@@ -935,78 +935,78 @@ void HelloVK::establishDisplaySizeIdentity() {
   displaySizeIdentity = capabilities.currentExtent;
 }
 
-// void HelloVK::createSwapChain() {
-//   SwapChainSupportDetails swapChainSupport =
-//       querySwapChainSupport(physicalDevice);
+void HelloVK::createSwapChain() {
+  SwapChainSupportDetails swapChainSupport =
+      querySwapChainSupport(physicalDevice);
 
-//   auto chooseSwapSurfaceFormat =
-//       [](const std::vector<VkSurfaceFormatKHR> &availableFormats) {
-//         for (const auto &availableFormat : availableFormats) {
-//           if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
-//               availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
-//             return availableFormat;
-//           }
-//         }
-//         return availableFormats[0];
-//       };
+  auto chooseSwapSurfaceFormat =
+      [](const std::vector<VkSurfaceFormatKHR> &availableFormats) {
+        for (const auto &availableFormat : availableFormats) {
+          if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
+              availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+            return availableFormat;
+          }
+        }
+        return availableFormats[0];
+      };
 
-//   VkSurfaceFormatKHR surfaceFormat =
-//       chooseSwapSurfaceFormat(swapChainSupport.formats);
+  VkSurfaceFormatKHR surfaceFormat =
+      chooseSwapSurfaceFormat(swapChainSupport.formats);
 
-//   // Please check
-//   // https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPresentModeKHR.html
-//   // for a discourse on different present modes.
-//   //
-//   // VK_PRESENT_MODE_FIFO_KHR = Hard Vsync
-//   // This is always supported on Android phones
-//   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+  // Please check
+  // https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPresentModeKHR.html
+  // for a discourse on different present modes.
+  //
+  // VK_PRESENT_MODE_FIFO_KHR = Hard Vsync
+  // This is always supported on Android phones
+  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-//   uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-//   if (swapChainSupport.capabilities.maxImageCount > 0 &&
-//       imageCount > swapChainSupport.capabilities.maxImageCount) {
-//     imageCount = swapChainSupport.capabilities.maxImageCount;
-//   }
-//   pretransformFlag = swapChainSupport.capabilities.currentTransform;
+  uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+  if (swapChainSupport.capabilities.maxImageCount > 0 &&
+      imageCount > swapChainSupport.capabilities.maxImageCount) {
+    imageCount = swapChainSupport.capabilities.maxImageCount;
+  }
+  pretransformFlag = swapChainSupport.capabilities.currentTransform;
 
-//   VkSwapchainCreateInfoKHR createInfo{};
-//   createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-//   createInfo.surface = surface;
-//   createInfo.minImageCount = imageCount;
-//   createInfo.imageFormat = surfaceFormat.format;
-//   createInfo.imageColorSpace = surfaceFormat.colorSpace;
-//   createInfo.imageExtent = displaySizeIdentity;
-//   createInfo.imageArrayLayers = 1;
-//   createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-//   createInfo.preTransform = pretransformFlag;
+  VkSwapchainCreateInfoKHR createInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  createInfo.surface = surface;
+  createInfo.minImageCount = imageCount;
+  createInfo.imageFormat = surfaceFormat.format;
+  createInfo.imageColorSpace = surfaceFormat.colorSpace;
+  createInfo.imageExtent = displaySizeIdentity;
+  createInfo.imageArrayLayers = 1;
+  createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  createInfo.preTransform = pretransformFlag;
 
-//   QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-//   uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(),
-//                                    indices.presentFamily.value()};
+  QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+  uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(),
+                                   indices.presentFamily.value()};
 
-//   if (indices.graphicsFamily != indices.presentFamily) {
-//     createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-//     createInfo.queueFamilyIndexCount = 2;
-//     createInfo.pQueueFamilyIndices = queueFamilyIndices;
-//   } else {
-//     createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-//     createInfo.queueFamilyIndexCount = 0;
-//     createInfo.pQueueFamilyIndices = nullptr;
-//   }
-//   createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
-//   createInfo.presentMode = presentMode;
-//   createInfo.clipped = VK_TRUE;
-//   createInfo.oldSwapchain = VK_NULL_HANDLE;
+  if (indices.graphicsFamily != indices.presentFamily) {
+    createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+    createInfo.queueFamilyIndexCount = 2;
+    createInfo.pQueueFamilyIndices = queueFamilyIndices;
+  } else {
+    createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    createInfo.queueFamilyIndexCount = 0;
+    createInfo.pQueueFamilyIndices = nullptr;
+  }
+  createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+  createInfo.presentMode = presentMode;
+  createInfo.clipped = VK_TRUE;
+  createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-//   VK_CHECK(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain));
+  VK_CHECK(vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain));
 
-//   vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
-//   swapChainImages.resize(imageCount);
-//   vkGetSwapchainImagesKHR(device, swapChain, &imageCount,
-//                           swapChainImages.data());
+  vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+  swapChainImages.resize(imageCount);
+  vkGetSwapchainImagesKHR(device, swapChain, &imageCount,
+                          swapChainImages.data());
 
-//   swapChainImageFormat = surfaceFormat.format;
-//   swapChainExtent = displaySizeIdentity;
-// }
+  swapChainImageFormat = surfaceFormat.format;
+  swapChainExtent = displaySizeIdentity;
+}
 
 // void HelloVK::createImageViews() {
 //   swapChainImageViews.resize(swapChainImages.size());
@@ -1279,26 +1279,26 @@ void HelloVK::establishDisplaySizeIdentity() {
 //   VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()));
 // }
 
-// void HelloVK::createSyncObjects() {
-//   imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-//   renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-//   inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+void HelloVK::createSyncObjects() {
+  imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+  renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+  inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
 
-//   VkSemaphoreCreateInfo semaphoreInfo{};
-//   semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+  VkSemaphoreCreateInfo semaphoreInfo{};
+  semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-//   VkFenceCreateInfo fenceInfo{};
-//   fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-//   fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-//   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-//     VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr,
-//                                &imageAvailableSemaphores[i]));
+  VkFenceCreateInfo fenceInfo{};
+  fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr,
+                               &imageAvailableSemaphores[i]));
 
-//     VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr,
-//                                &renderFinishedSemaphores[i]));
+    VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr,
+                               &renderFinishedSemaphores[i]));
 
-//     VK_CHECK(vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]));
-//   }
-// }
+    VK_CHECK(vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]));
+  }
+}
 
 }  // namespace vkt
