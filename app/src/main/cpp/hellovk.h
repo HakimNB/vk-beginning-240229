@@ -30,12 +30,12 @@
 #include <string>
 #include <vector>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+// #include <glm/glm.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
+// #include <glm/gtc/type_ptr.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+// #define STB_IMAGE_IMPLEMENTATION
+// #include <stb_image.h>
 
 /**
  * HelloVK contains the core of Vulkan pipeline setup. It includes recording
@@ -60,9 +60,9 @@ namespace vkt {
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
-struct UniformBufferObject {
-  glm::mat4 mvp;
-};
+// struct UniformBufferObject {
+//   glm::mat4 mvp;
+// };
 
 struct QueueFamilyIndices {
   std::optional<uint32_t> graphicsFamily;
@@ -240,7 +240,7 @@ class HelloVK {
    *
    * The validation layers are not shipped with the APK as they are sizeable.
    */
-  bool enableValidationLayers = true;
+  bool enableValidationLayers = false;
 
   const std::vector<const char *> validationLayers = {
       "VK_LAYER_KHRONOS_validation"};
