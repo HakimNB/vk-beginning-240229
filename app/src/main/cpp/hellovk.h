@@ -30,12 +30,12 @@
 #include <string>
 #include <vector>
 
-// #include <glm/glm.hpp>
-// #include <glm/gtc/matrix_transform.hpp>
-// #include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-// #define STB_IMAGE_IMPLEMENTATION
-// #include <stb_image.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 /**
  * HelloVK contains the core of Vulkan pipeline setup. It includes recording
@@ -60,9 +60,9 @@ namespace vkt {
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
-// struct UniformBufferObject {
-//   glm::mat4 mvp;
-// };
+struct UniformBufferObject {
+  glm::mat4 mvp;
+};
 
 struct QueueFamilyIndices {
   std::optional<uint32_t> graphicsFamily;
@@ -197,18 +197,18 @@ class HelloVK {
   void pickPhysicalDevice();
   void createLogicalDeviceAndQueue();
   void createSwapChain();
-  void createImageViews();
+  // void createImageViews();
   // void createTextureImage();
   // void decodeImage();
-  // void createTextureImageViews();
-  // void createTextureSampler();
-  // void copyBufferToImage();
+  void createTextureImageViews();
+  void createTextureSampler();
+  void copyBufferToImage();
   void createRenderPass();
-  // void createDescriptorSetLayout();
+  void createDescriptorSetLayout();
   void createGraphicsPipeline();
   void createFramebuffers();
-  // void createCommandPool();
-  // void createCommandBuffer();
+  void createCommandPool();
+  void createCommandBuffer();
   void createSyncObjects();
   QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
   bool checkDeviceExtensionSupport(VkPhysicalDevice device);
@@ -223,9 +223,9 @@ class HelloVK {
   void onOrientationChange();
   uint32_t findMemoryType(uint32_t typeFilter,
                           VkMemoryPropertyFlags properties);
-  // void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
-  //                   VkMemoryPropertyFlags properties, VkBuffer &buffer,
-  //                   VkDeviceMemory &bufferMemory);
+  void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+                    VkMemoryPropertyFlags properties, VkBuffer &buffer,
+                    VkDeviceMemory &bufferMemory);
   // void createUniformBuffers();
   // void updateUniformBuffer(uint32_t currentImage);
   // void createDescriptorPool();
@@ -240,7 +240,7 @@ class HelloVK {
    *
    * The validation layers are not shipped with the APK as they are sizeable.
    */
-  bool enableValidationLayers = false;
+  bool enableValidationLayers = true;
 
   const std::vector<const char *> validationLayers = {
       "VK_LAYER_KHRONOS_validation"};
@@ -307,7 +307,7 @@ void HelloVK::initVulkan() {
   createSwapChain();
   // createImageViews();
   createRenderPass();
-  // createDescriptorSetLayout();
+  createDescriptorSetLayout();
   createGraphicsPipeline();
   createFramebuffers();
   // createCommandPool();
@@ -330,30 +330,30 @@ void HelloVK::initVulkan() {
  *  Upon creation, these buffers will list memory requirements which need to be
  *  satisfied by the device in use in order to be created.
  */
-// void HelloVK::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
-//                            VkMemoryPropertyFlags properties, VkBuffer &buffer,
-//                            VkDeviceMemory &bufferMemory) {
-//   VkBufferCreateInfo bufferInfo{};
-//   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-//   bufferInfo.size = size;
-//   bufferInfo.usage = usage;
-//   bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+void HelloVK::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+                           VkMemoryPropertyFlags properties, VkBuffer &buffer,
+                           VkDeviceMemory &bufferMemory) {
+  VkBufferCreateInfo bufferInfo{};
+  bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+  bufferInfo.size = size;
+  bufferInfo.usage = usage;
+  bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-//   VK_CHECK(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer));
+  VK_CHECK(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer));
 
-//   VkMemoryRequirements memRequirements;
-//   vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
+  VkMemoryRequirements memRequirements;
+  vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
 
-//   VkMemoryAllocateInfo allocInfo{};
-//   allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-//   allocInfo.allocationSize = memRequirements.size;
-//   allocInfo.memoryTypeIndex =
-//       findMemoryType(memRequirements.memoryTypeBits, properties);
+  VkMemoryAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = memRequirements.size;
+  allocInfo.memoryTypeIndex =
+      findMemoryType(memRequirements.memoryTypeBits, properties);
 
-//   VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory));
+  VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory));
 
-//   vkBindBufferMemory(device, buffer, bufferMemory, 0);
-// }
+  vkBindBufferMemory(device, buffer, bufferMemory, 0);
+}
 
 /*
  * Finds the index of the memory heap which matches a particular buffer's memory
@@ -390,33 +390,33 @@ uint32_t HelloVK::findMemoryType(uint32_t typeFilter,
 //   }
 // }
 
-// void HelloVK::createDescriptorSetLayout() {
-//   VkDescriptorSetLayoutBinding uboLayoutBinding{};
-//   uboLayoutBinding.binding = 0;
-//   uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-//   uboLayoutBinding.descriptorCount = 1;
-//   uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-//   uboLayoutBinding.pImmutableSamplers = nullptr;
+void HelloVK::createDescriptorSetLayout() {
+  VkDescriptorSetLayoutBinding uboLayoutBinding{};
+  uboLayoutBinding.binding = 0;
+  uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  uboLayoutBinding.descriptorCount = 1;
+  uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  uboLayoutBinding.pImmutableSamplers = nullptr;
 
-//   // Combined image sampler layout binding
-//   VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-//   samplerLayoutBinding.binding = 1;
-//   samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-//   samplerLayoutBinding.descriptorCount = 1;
-//   samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-//   samplerLayoutBinding.pImmutableSamplers = nullptr;
+  // Combined image sampler layout binding
+  VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+  samplerLayoutBinding.binding = 1;
+  samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  samplerLayoutBinding.descriptorCount = 1;
+  samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+  samplerLayoutBinding.pImmutableSamplers = nullptr;
 
-//   std::array<VkDescriptorSetLayoutBinding, 2> bindings =
-//       {uboLayoutBinding, samplerLayoutBinding};
+  std::array<VkDescriptorSetLayoutBinding, 2> bindings =
+      {uboLayoutBinding, samplerLayoutBinding};
 
-//   VkDescriptorSetLayoutCreateInfo layoutInfo{};
-//   layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-//   layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-//   layoutInfo.pBindings = bindings.data();
+  VkDescriptorSetLayoutCreateInfo layoutInfo{};
+  layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+  layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+  layoutInfo.pBindings = bindings.data();
 
-//   VK_CHECK(vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr,
-//                                        &descriptorSetLayout));
-// }
+  VK_CHECK(vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr,
+                                       &descriptorSetLayout));
+}
 
 void HelloVK::reset(ANativeWindow *newWindow, AAssetManager *newManager) {
   window.reset(newWindow);
@@ -604,49 +604,49 @@ void HelloVK::onOrientationChange() {
   orientationChanged = false;
 }
 
-// void HelloVK::recordCommandBuffer(VkCommandBuffer commandBuffer,
-//                                   uint32_t imageIndex) {
-//   VkCommandBufferBeginInfo beginInfo{};
-//   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-//   beginInfo.flags = 0;
-//   beginInfo.pInheritanceInfo = nullptr;
+void HelloVK::recordCommandBuffer(VkCommandBuffer commandBuffer,
+                                  uint32_t imageIndex) {
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = 0;
+  beginInfo.pInheritanceInfo = nullptr;
 
-//   VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+  VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
-//   VkRenderPassBeginInfo renderPassInfo{};
-//   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-//   renderPassInfo.renderPass = renderPass;
-//   renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
-//   renderPassInfo.renderArea.offset = {0, 0};
-//   renderPassInfo.renderArea.extent = swapChainExtent;
+  VkRenderPassBeginInfo renderPassInfo{};
+  renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  renderPassInfo.renderPass = renderPass;
+  renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
+  renderPassInfo.renderArea.offset = {0, 0};
+  renderPassInfo.renderArea.extent = swapChainExtent;
 
-//   VkViewport viewport{};
-//   viewport.width = (float)swapChainExtent.width;
-//   viewport.height = (float)swapChainExtent.height;
-//   viewport.minDepth = 0.0f;
-//   viewport.maxDepth = 1.0f;
-//   vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+  VkViewport viewport{};
+  viewport.width = (float)swapChainExtent.width;
+  viewport.height = (float)swapChainExtent.height;
+  viewport.minDepth = 0.0f;
+  viewport.maxDepth = 1.0f;
+  vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-//   VkRect2D scissor{};
-//   scissor.extent = swapChainExtent;
-//   vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+  VkRect2D scissor{};
+  scissor.extent = swapChainExtent;
+  vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-//   VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+  VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
 
-//   renderPassInfo.clearValueCount = 1;
-//   renderPassInfo.pClearValues = &clearColor;
-//   vkCmdBeginRenderPass(commandBuffer, &renderPassInfo,
-//                        VK_SUBPASS_CONTENTS_INLINE);
-//   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-//                     graphicsPipeline);
-//   vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-//                           pipelineLayout, 0, 1, &descriptorSets[currentFrame],
-//                           0, nullptr);
+  renderPassInfo.clearValueCount = 1;
+  renderPassInfo.pClearValues = &clearColor;
+  vkCmdBeginRenderPass(commandBuffer, &renderPassInfo,
+                       VK_SUBPASS_CONTENTS_INLINE);
+  vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    graphicsPipeline);
+  vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                          pipelineLayout, 0, 1, &descriptorSets[currentFrame],
+                          0, nullptr);
 
-//   vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-//   vkCmdEndRenderPass(commandBuffer);
-//   VK_CHECK(vkEndCommandBuffer(commandBuffer));
-// }
+  vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+  vkCmdEndRenderPass(commandBuffer);
+  VK_CHECK(vkEndCommandBuffer(commandBuffer));
+}
 
 void HelloVK::cleanupSwapChain() {
   for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
@@ -1169,115 +1169,115 @@ void HelloVK::createSwapChain() {
 //   stbi_image_free(decodedData);
 // }
 
-// void HelloVK::copyBufferToImage() {
-//   VkImageSubresourceRange subresourceRange{};
-//   subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-//   subresourceRange.baseMipLevel = 0;
-//   subresourceRange.levelCount = 1;
-//   subresourceRange.layerCount = 1;
+void HelloVK::copyBufferToImage() {
+  VkImageSubresourceRange subresourceRange{};
+  subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  subresourceRange.baseMipLevel = 0;
+  subresourceRange.levelCount = 1;
+  subresourceRange.layerCount = 1;
 
-//   VkImageMemoryBarrier imageMemoryBarrier{};
-//   imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-//   imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-//   imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-//   imageMemoryBarrier.image = textureImage;
-//   imageMemoryBarrier.subresourceRange = subresourceRange;
-//   imageMemoryBarrier.srcAccessMask = 0;
-//   imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-//   imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-//   imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+  VkImageMemoryBarrier imageMemoryBarrier{};
+  imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+  imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+  imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+  imageMemoryBarrier.image = textureImage;
+  imageMemoryBarrier.subresourceRange = subresourceRange;
+  imageMemoryBarrier.srcAccessMask = 0;
+  imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+  imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
-//   VkCommandBuffer cmd;
-//   VkCommandBufferAllocateInfo cmdAllocInfo{};
-//   cmdAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-//   cmdAllocInfo.commandPool = commandPool;
-//   cmdAllocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-//   cmdAllocInfo.commandBufferCount = 1;
+  VkCommandBuffer cmd;
+  VkCommandBufferAllocateInfo cmdAllocInfo{};
+  cmdAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  cmdAllocInfo.commandPool = commandPool;
+  cmdAllocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  cmdAllocInfo.commandBufferCount = 1;
 
-//   VK_CHECK(vkAllocateCommandBuffers(device, &cmdAllocInfo, &cmd));
+  VK_CHECK(vkAllocateCommandBuffers(device, &cmdAllocInfo, &cmd));
 
-//   VkCommandBufferBeginInfo beginInfo{};
-//   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-//   vkBeginCommandBuffer(cmd, &beginInfo);
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  vkBeginCommandBuffer(cmd, &beginInfo);
 
-//   vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_HOST_BIT,
-//                        VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
-//                        nullptr, 1, &imageMemoryBarrier);
+  vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_HOST_BIT,
+                       VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
+                       nullptr, 1, &imageMemoryBarrier);
 
-//   VkBufferImageCopy bufferImageCopy{};
-//   bufferImageCopy.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-//   bufferImageCopy.imageSubresource.mipLevel = 0;
-//   bufferImageCopy.imageSubresource.baseArrayLayer = 0;
-//   bufferImageCopy.imageSubresource.layerCount = 1;
-//   bufferImageCopy.imageExtent.width = textureWidth;
-//   bufferImageCopy.imageExtent.height = textureHeight;
-//   bufferImageCopy.imageExtent.depth = 1;
-//   bufferImageCopy.bufferOffset = 0;
+  VkBufferImageCopy bufferImageCopy{};
+  bufferImageCopy.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  bufferImageCopy.imageSubresource.mipLevel = 0;
+  bufferImageCopy.imageSubresource.baseArrayLayer = 0;
+  bufferImageCopy.imageSubresource.layerCount = 1;
+  bufferImageCopy.imageExtent.width = textureWidth;
+  bufferImageCopy.imageExtent.height = textureHeight;
+  bufferImageCopy.imageExtent.depth = 1;
+  bufferImageCopy.bufferOffset = 0;
 
-//   vkCmdCopyBufferToImage(cmd, stagingBuffer, textureImage,
-//                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-//                          1, &bufferImageCopy);
+  vkCmdCopyBufferToImage(cmd, stagingBuffer, textureImage,
+                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                         1, &bufferImageCopy);
 
-//   imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-//   imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-//   imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-//   imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+  imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+  imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+  imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+  imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-//   vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT,
-//                        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr,
-//                        0, nullptr, 1, &imageMemoryBarrier);
+  vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr,
+                       0, nullptr, 1, &imageMemoryBarrier);
 
-//   vkEndCommandBuffer(cmd);
+  vkEndCommandBuffer(cmd);
 
-//   VkSubmitInfo submitInfo{};
-//   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-//   submitInfo.commandBufferCount = 1;
-//   submitInfo.pCommandBuffers = &cmd;
+  VkSubmitInfo submitInfo{};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &cmd;
 
-//   VK_CHECK(vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
-//   vkQueueWaitIdle(graphicsQueue);
-// }
+  VK_CHECK(vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
+  vkQueueWaitIdle(graphicsQueue);
+}
 
-// void HelloVK::createTextureImageViews() {
-//   VkImageViewCreateInfo createInfo{};
-//   createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-//   createInfo.image = textureImage;
-//   createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-//   createInfo.format = VK_FORMAT_R8G8B8_UNORM;
-//   createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-//   createInfo.subresourceRange.baseMipLevel = 0;
-//   createInfo.subresourceRange.levelCount = 1;
-//   createInfo.subresourceRange.baseArrayLayer = 0;
-//   createInfo.subresourceRange.layerCount = 1;
+void HelloVK::createTextureImageViews() {
+  VkImageViewCreateInfo createInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  createInfo.image = textureImage;
+  createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  createInfo.format = VK_FORMAT_R8G8B8_UNORM;
+  createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  createInfo.subresourceRange.baseMipLevel = 0;
+  createInfo.subresourceRange.levelCount = 1;
+  createInfo.subresourceRange.baseArrayLayer = 0;
+  createInfo.subresourceRange.layerCount = 1;
 
-//   VK_CHECK(vkCreateImageView(device, &createInfo, nullptr, &textureImageView));
-// }
+  VK_CHECK(vkCreateImageView(device, &createInfo, nullptr, &textureImageView));
+}
 
-// void HelloVK::createTextureSampler() {
-//   VkSamplerCreateInfo createInfo{};
-//   createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-//   createInfo.magFilter = VK_FILTER_LINEAR;
-//   createInfo.minFilter = VK_FILTER_LINEAR;
-//   createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-//   createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-//   createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-//   createInfo.anisotropyEnable = VK_FALSE;
-//   createInfo.maxAnisotropy = 16;
-//   createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-//   createInfo.unnormalizedCoordinates = VK_FALSE;
-//   createInfo.compareEnable = VK_FALSE;
-//   createInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-//   createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-//   createInfo.mipLodBias = 0.0f;
-//   createInfo.minLod = 0.0f;
-//   createInfo.maxLod = VK_LOD_CLAMP_NONE;
+void HelloVK::createTextureSampler() {
+  VkSamplerCreateInfo createInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+  createInfo.magFilter = VK_FILTER_LINEAR;
+  createInfo.minFilter = VK_FILTER_LINEAR;
+  createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  createInfo.anisotropyEnable = VK_FALSE;
+  createInfo.maxAnisotropy = 16;
+  createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+  createInfo.unnormalizedCoordinates = VK_FALSE;
+  createInfo.compareEnable = VK_FALSE;
+  createInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+  createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+  createInfo.mipLodBias = 0.0f;
+  createInfo.minLod = 0.0f;
+  createInfo.maxLod = VK_LOD_CLAMP_NONE;
 
-//   VK_CHECK(vkCreateSampler(device, &createInfo, nullptr, &textureSampler));
-// }
+  VK_CHECK(vkCreateSampler(device, &createInfo, nullptr, &textureSampler));
+}
 
 void HelloVK::createRenderPass() {
   VkAttachmentDescription colorAttachment{};
@@ -1508,25 +1508,25 @@ void HelloVK::createFramebuffers() {
   }
 }
 
-// void HelloVK::createCommandPool() {
-//   QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
-//   VkCommandPoolCreateInfo poolInfo{};
-//   poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-//   poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-//   poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-//   VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
-// }
+void HelloVK::createCommandPool() {
+  QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
+  VkCommandPoolCreateInfo poolInfo{};
+  poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+  poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+  VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
+}
 
-// void HelloVK::createCommandBuffer() {
-//   commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-//   VkCommandBufferAllocateInfo allocInfo{};
-//   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-//   allocInfo.commandPool = commandPool;
-//   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-//   allocInfo.commandBufferCount = commandBuffers.size();
+void HelloVK::createCommandBuffer() {
+  commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.commandPool = commandPool;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandBufferCount = commandBuffers.size();
 
-//   VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()));
-// }
+  VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()));
+}
 
 void HelloVK::createSyncObjects() {
   imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
