@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.compose.foundation:foundation-layout:1.2.0'
+    implementation 'androidx.core:core:1.1.0'
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.games:games-activity:2.1.0-alpha01'
