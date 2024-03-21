@@ -52,15 +52,20 @@ struct VulkanEngine {
 static void HandleCmd(struct android_app *app, int32_t cmd) {
   auto *engine = (VulkanEngine *)app->userData;
   switch (cmd) {
+    case UNUSED_APP_CMD_INPUT_CHANGED:
+      LOGI("HandleCmd - UNUSED_APP_CMD_INPUT_CHANGED");
+      break;
     case APP_CMD_START:
+      LOGI("HandleCmd - APP_CMD_START");
       if (engine->app->window != nullptr) {
         engine->app_backend->reset(app->window, app->activity->assetManager);
         engine->app_backend->initVulkan();
         engine->canRender = true;
       }
+      break;
     case APP_CMD_INIT_WINDOW:
       // The window is being shown, get it ready.
-      LOGI("Called - APP_CMD_INIT_WINDOW");
+      LOGI("HandleCmd - APP_CMD_INIT_WINDOW");
       if (engine->app->window != nullptr) {
         LOGI("Setting a new surface");
         engine->app_backend->reset(app->window, app->activity->assetManager);
@@ -73,13 +78,51 @@ static void HandleCmd(struct android_app *app, int32_t cmd) {
       break;
     case APP_CMD_TERM_WINDOW:
       // The window is being hidden or closed, clean it up.
+      LOGI("HandleCmd - APP_CMD_TERM_WINDOW");
       engine->canRender = false;
       break;
     case APP_CMD_DESTROY:
       // The window is being hidden or closed, clean it up.
-      LOGI("Destroying");
+      LOGI("HandleCmd - APP_CMD_DESTROY");
       engine->app_backend->cleanup();
+    case APP_CMD_WINDOW_RESIZED:
+      LOGI("HandleCmd - APP_CMD_WINDOW_RESIZED");
+      break;
+    case APP_CMD_WINDOW_REDRAW_NEEDED:
+      LOGI("HandleCmd - APP_CMD_WINDOW_REDRAW_NEEDED");
+      break;
+    case APP_CMD_CONTENT_RECT_CHANGED:
+      LOGI("HandleCmd - APP_CMD_CONTENT_RECT_CHANGED");
+      break;
+    case APP_CMD_GAINED_FOCUS:
+      LOGI("HandleCmd - APP_CMD_GAINED_FOCUS");
+      break;
+    case APP_CMD_LOST_FOCUS:
+      LOGI("HandleCmd - APP_CMD_LOST_FOCUS");
+      break;
+    case APP_CMD_CONFIG_CHANGED:
+      LOGI("HandleCmd - APP_CMD_CONFIG_CHANGED");
+      break;
+    case APP_CMD_LOW_MEMORY:
+      LOGI("HandleCmd - APP_CMD_LOW_MEMORY");
+      break;
+    case APP_CMD_RESUME:
+      LOGI("HandleCmd - APP_CMD_RESUME");
+      break;
+    case APP_CMD_SAVE_STATE:
+      LOGI("HandleCmd - APP_CMD_SAVE_STATE");
+      break;
+    case APP_CMD_PAUSE:
+      LOGI("HandleCmd - APP_CMD_PAUSE");
+      break;
+    case APP_CMD_STOP:
+      LOGI("HandleCmd - APP_CMD_STOP");
+      break;
+    case APP_CMD_WINDOW_INSETS_CHANGED:
+      LOGI("HandleCmd - APP_CMD_WINDOW_INSETS_CHANGED");
+      break;
     default:
+      LOGI("HandleCmd - Unhandled Command: %d", cmd);
       break;
   }
 }
