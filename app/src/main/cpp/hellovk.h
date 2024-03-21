@@ -99,8 +99,8 @@ class HelloVK {
   void createDescriptorSetLayout();
   void createGraphicsPipeline();
   void createFrameBuffers();
-  // void createCommandPool();
-  // void createCommandBuffer();
+  void createCommandPool();
+  void createCommandBuffer();
   void createSyncObjects();
   QueueFamilyIndices findQueueFamilies(VkPhysicalDevice candidateDevice);
   bool checkDeviceExtensionSupport(VkPhysicalDevice candidateDevice);
@@ -155,8 +155,8 @@ class HelloVK {
   VkExtent2D displaySizeIdentity;
   std::vector<VkImageView> swapChainImageViews;
   std::vector<VkFramebuffer> swapChainFrameBuffers;
-  // VkCommandPool commandPool;
-  // std::vector<VkCommandBuffer> commandBuffers;
+  VkCommandPool commandPool;
+  std::vector<VkCommandBuffer> commandBuffers;
 
   VkQueue graphicsQueue;
   VkQueue presentQueue;

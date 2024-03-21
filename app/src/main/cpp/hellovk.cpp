@@ -139,8 +139,8 @@ void HelloVK::initVulkan() {
   createDescriptorSets();
   createGraphicsPipeline();
   createFrameBuffers();
-//   createCommandPool();
-//   createCommandBuffer();
+  createCommandPool();
+  createCommandBuffer();
   createSyncObjects();
   initialized = true;
 }
@@ -1120,27 +1120,27 @@ void HelloVK::createFrameBuffers() {
   }
 }
 
-// void HelloVK::createCommandPool() {
-//   LOGV("HelloVK::createCommandPool");
-//   QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
-//   VkCommandPoolCreateInfo poolInfo{};
-//   poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-//   poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-//   poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-//   VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
-// }
+void HelloVK::createCommandPool() {
+  LOGV("HelloVK::createCommandPool");
+  QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
+  VkCommandPoolCreateInfo poolInfo{};
+  poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+  poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+  VK_CHECK(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool));
+}
 
-// void HelloVK::createCommandBuffer() {
-//   LOGV("HelloVK::createCommandBuffer");
-//   commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-//   VkCommandBufferAllocateInfo allocInfo{};
-//   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-//   allocInfo.commandPool = commandPool;
-//   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-//   allocInfo.commandBufferCount = commandBuffers.size();
+void HelloVK::createCommandBuffer() {
+  LOGV("HelloVK::createCommandBuffer");
+  commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.commandPool = commandPool;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandBufferCount = commandBuffers.size();
 
-//   VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()));
-// }
+  VK_CHECK(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()));
+}
 
 void HelloVK::createSyncObjects() {
   LOGV("HelloVK::createSyncObjects");
