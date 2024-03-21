@@ -96,8 +96,8 @@ class HelloVK {
   void createSwapChain();
   void createImageViews();
   void createRenderPass();
-  // void createDescriptorSetLayout();
-  // void createGraphicsPipeline();
+  void createDescriptorSetLayout();
+  void createGraphicsPipeline();
   void createFrameBuffers();
   // void createCommandPool();
   // void createCommandBuffer();
@@ -108,7 +108,7 @@ class HelloVK {
   bool checkValidationLayerSupport();
   std::vector<const char *> getRequiredExtensions();
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice candidateDevice);
-  // VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
+  VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
   // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
   void recreateSwapChain();
   // void onOrientationChange();
@@ -162,9 +162,9 @@ class HelloVK {
   VkQueue presentQueue;
 
   VkRenderPass renderPass;
-  // VkDescriptorSetLayout descriptorSetLayout;
-  // VkPipelineLayout pipelineLayout;
-  // VkPipeline graphicsPipeline;
+  VkDescriptorSetLayout descriptorSetLayout;
+  VkPipelineLayout pipelineLayout;
+  VkPipeline graphicsPipeline;
 
   // std::vector<VkBuffer> uniformBuffers;
   // std::vector<VkDeviceMemory> uniformBuffersMemory;
