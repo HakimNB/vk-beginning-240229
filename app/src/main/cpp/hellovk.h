@@ -112,15 +112,15 @@ class HelloVK {
   // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
   void recreateSwapChain();
   // void onOrientationChange();
-  // uint32_t findMemoryType(uint32_t typeFilter,
-  //                         VkMemoryPropertyFlags properties);
-  // void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
-  //                   VkMemoryPropertyFlags properties, VkBuffer &buffer,
-  //                   VkDeviceMemory &bufferMemory);
-  // void createUniformBuffers();
+  uint32_t findMemoryType(uint32_t typeFilter,
+                          VkMemoryPropertyFlags properties);
+  void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+                    VkMemoryPropertyFlags properties, VkBuffer &buffer,
+                    VkDeviceMemory &bufferMemory);
+  void createUniformBuffers();
   // void updateUniformBuffer(uint32_t currentImage);
-  // void createDescriptorPool();
-  // void createDescriptorSets();
+  void createDescriptorPool();
+  void createDescriptorSets();
   void establishDisplaySizeIdentity();
 
   /*
@@ -166,14 +166,14 @@ class HelloVK {
   VkPipelineLayout pipelineLayout;
   VkPipeline graphicsPipeline;
 
-  // std::vector<VkBuffer> uniformBuffers;
-  // std::vector<VkDeviceMemory> uniformBuffersMemory;
+  std::vector<VkBuffer> uniformBuffers;
+  std::vector<VkDeviceMemory> uniformBuffersMemory;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;
   std::vector<VkFence> inFlightFences;
-  // VkDescriptorPool descriptorPool;
-  // std::vector<VkDescriptorSet> descriptorSets;
+  VkDescriptorPool descriptorPool;
+  std::vector<VkDescriptorSet> descriptorSets;
 
   // uint32_t currentFrame = 0;
   // bool orientationChanged = false;
