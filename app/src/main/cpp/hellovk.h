@@ -81,8 +81,8 @@ class HelloVK {
  public:
   void initVulkan();
   // void render();
-  // void cleanup();
-  // void cleanupSwapChain();
+  void cleanup();
+  void cleanupSwapChain();
   void reset(ANativeWindow *newWindow, AAssetManager *newManager);
   bool initialized = false;
 
@@ -93,7 +93,7 @@ class HelloVK {
   void setupDebugMessenger();
   void pickPhysicalDevice();
   void createLogicalDeviceAndQueue();
-  // void createSwapChain();
+  void createSwapChain();
   // void createImageViews();
   // void createRenderPass();
   // void createDescriptorSetLayout();
@@ -101,7 +101,7 @@ class HelloVK {
   // void createFrameBuffers();
   // void createCommandPool();
   // void createCommandBuffer();
-  // void createSyncObjects();
+  void createSyncObjects();
   QueueFamilyIndices findQueueFamilies(VkPhysicalDevice candidateDevice);
   bool checkDeviceExtensionSupport(VkPhysicalDevice candidateDevice);
   bool isDeviceSuitable(VkPhysicalDevice candidateDevice);
@@ -110,7 +110,7 @@ class HelloVK {
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice candidateDevice);
   // VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
   // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-  // void recreateSwapChain();
+  void recreateSwapChain();
   // void onOrientationChange();
   // uint32_t findMemoryType(uint32_t typeFilter,
   //                         VkMemoryPropertyFlags properties);
@@ -148,10 +148,10 @@ class HelloVK {
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
   VkDevice device;
 
-  // VkSwapchainKHR swapChain;
-  // std::vector<VkImage> swapChainImages;
-  // VkFormat swapChainImageFormat;
-  // VkExtent2D swapChainExtent;
+  VkSwapchainKHR swapChain;
+  std::vector<VkImage> swapChainImages;
+  VkFormat swapChainImageFormat;
+  VkExtent2D swapChainExtent;
   VkExtent2D displaySizeIdentity;
   // std::vector<VkImageView> swapChainImageViews;
   // std::vector<VkFramebuffer> swapChainFrameBuffers;
@@ -169,15 +169,15 @@ class HelloVK {
   // std::vector<VkBuffer> uniformBuffers;
   // std::vector<VkDeviceMemory> uniformBuffersMemory;
 
-  // std::vector<VkSemaphore> imageAvailableSemaphores;
-  // std::vector<VkSemaphore> renderFinishedSemaphores;
-  // std::vector<VkFence> inFlightFences;
+  std::vector<VkSemaphore> imageAvailableSemaphores;
+  std::vector<VkSemaphore> renderFinishedSemaphores;
+  std::vector<VkFence> inFlightFences;
   // VkDescriptorPool descriptorPool;
   // std::vector<VkDescriptorSet> descriptorSets;
 
   // uint32_t currentFrame = 0;
   // bool orientationChanged = false;
-  // VkSurfaceTransformFlagBitsKHR preTransformFlag;
+  VkSurfaceTransformFlagBitsKHR preTransformFlag;
 };
 
 }  // namespace vkt

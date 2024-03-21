@@ -77,8 +77,8 @@ static void HandleCmd(struct android_app *app, int32_t cmd) {
       break;
     case APP_CMD_DESTROY:
       // The window is being hidden or closed, clean it up.
-      // LOGI("Destroying");
-      // engine->app_backend->cleanup();
+      LOGI("Destroying");
+      engine->app_backend->cleanup();
     default:
       break;
   }
