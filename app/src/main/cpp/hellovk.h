@@ -80,7 +80,7 @@ struct ANativeWindowDeleter {
 class HelloVK {
  public:
   void initVulkan();
-  // void render();
+  void render();
   void cleanup();
   void cleanupSwapChain();
   void reset(ANativeWindow *newWindow, AAssetManager *newManager);
@@ -109,16 +109,16 @@ class HelloVK {
   std::vector<const char *> getRequiredExtensions();
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice candidateDevice);
   VkShaderModule createShaderModule(const std::vector<uint8_t> &code);
-  // void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+  void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
   void recreateSwapChain();
-  // void onOrientationChange();
+  void onOrientationChange();
   uint32_t findMemoryType(uint32_t typeFilter,
                           VkMemoryPropertyFlags properties);
   void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
                     VkMemoryPropertyFlags properties, VkBuffer &buffer,
                     VkDeviceMemory &bufferMemory);
   void createUniformBuffers();
-  // void updateUniformBuffer(uint32_t currentImage);
+  void updateUniformBuffer(uint32_t currentImage);
   void createDescriptorPool();
   void createDescriptorSets();
   void establishDisplaySizeIdentity();
@@ -175,8 +175,8 @@ class HelloVK {
   VkDescriptorPool descriptorPool;
   std::vector<VkDescriptorSet> descriptorSets;
 
-  // uint32_t currentFrame = 0;
-  // bool orientationChanged = false;
+  uint32_t currentFrame = 0;
+  bool orientationChanged = false;
   VkSurfaceTransformFlagBitsKHR preTransformFlag;
 };
 

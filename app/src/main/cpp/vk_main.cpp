@@ -56,7 +56,7 @@ static void HandleCmd(struct android_app *app, int32_t cmd) {
       if (engine->app->window != nullptr) {
         engine->app_backend->reset(app->window, app->activity->assetManager);
         engine->app_backend->initVulkan();
-      //   engine->canRender = true;
+        engine->canRender = true;
       }
     case APP_CMD_INIT_WINDOW:
       // The window is being shown, get it ready.
@@ -68,12 +68,12 @@ static void HandleCmd(struct android_app *app, int32_t cmd) {
           LOGI("Starting application");
           engine->app_backend->initVulkan();
         }
-      //   engine->canRender = true;
+        engine->canRender = true;
       }
       break;
     case APP_CMD_TERM_WINDOW:
       // The window is being hidden or closed, clean it up.
-      // engine->canRender = false;
+      engine->canRender = false;
       break;
     case APP_CMD_DESTROY:
       // The window is being hidden or closed, clean it up.
@@ -146,6 +146,6 @@ void android_main(struct android_app *state) {
 
     HandleInputEvents(state);
 
-    // engine.app_backend->render();
+    engine.app_backend->render();
   }
 }
