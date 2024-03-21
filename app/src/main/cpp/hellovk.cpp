@@ -316,17 +316,17 @@ void HelloVK::render() {
  * getPreRotationMatrix handles screen rotation with 3 hardcoded rotation
  * matrices (detailed below). We skip the 180 degrees rotation.
  */
-void getPreRotationMatrix(const VkSurfaceTransformFlagBitsKHR &preTransformFlag,
-                          std::array<float, 16> &mat) {
+void getPreRotationMatrix(glm::mat4 &mat, float ratio) {
   // mat is initialized to the identity matrix
-  mat = {1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-  if (preTransformFlag & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
-    // mat is set to a 90 deg rotation matrix
-    mat = {0., 1., 0., 0., -1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-  } else if (preTransformFlag & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
-    // mat is set to 270 deg rotation matrix
-    mat = {0., -1., 0., 0., 1., 0, 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.};
-  }
+  mat = glm::mat4(1.0f);
+
+  // scale by screen ratio
+  mat = glm::scale(mat, glm::vec3(1.0f, ratio, 1.0f));
+
+  // rotate 1 degree every function call.
+  static float currentAngleDegrees = 0.0f;
+  currentAngleDegrees += 1.0f;
+  mat = glm::rotate(mat, glm::radians(currentAngleDegrees), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 void HelloVK::createDescriptorPool() {
@@ -378,11 +378,12 @@ void HelloVK::createDescriptorSets() {
 
 void HelloVK::updateUniformBuffer(uint32_t currentImage) {
   UniformBufferObject ubo{};
-  getPreRotationMatrix(preTransformFlag, ubo.mvp);
+  float ratio = (float)swapChainExtent.width / (float)swapChainExtent.height;
+  getPreRotationMatrix(ubo.mvp, ratio);
   void *data;
   VK_CHECK(vkMapMemory(device, uniformBuffersMemory[currentImage], 0,
                        sizeof(ubo), 0, &data));
-  memcpy(data, &ubo, sizeof(ubo));
+  memcpy(data, glm::value_ptr(ubo.mvp), sizeof(glm::mat4));
   vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
 }
 

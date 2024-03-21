@@ -30,6 +30,10 @@
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 /**
  * HelloVK contains the core of Vulkan pipeline setup. It includes recording
  * draw commands as well as screen clearing during the render pass.
@@ -56,7 +60,7 @@ namespace vkt {
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 struct UniformBufferObject {
-  std::array<float, 16> mvp;
+  glm::mat4 mvp;
 };
 
 struct QueueFamilyIndices {
