@@ -16,6 +16,9 @@
 
 #include "hellovk.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 namespace vkt {
 
 std::vector<uint8_t> LoadBinaryFileToVector(const char *file_path,

@@ -99,6 +99,11 @@ class HelloVK {
   void createLogicalDeviceAndQueue();
   void createSwapChain();
   void createImageViews();
+  void createTextureImage();
+  void decodeImage();
+  void createTextureImageViews();
+  void createTextureSampler();
+  void copyBufferToImage();
   void createRenderPass();
   void createDescriptorSetLayout();
   void createGraphicsPipeline();
@@ -178,6 +183,14 @@ class HelloVK {
   std::vector<VkFence> inFlightFences;
   VkDescriptorPool descriptorPool;
   std::vector<VkDescriptorSet> descriptorSets;
+
+  VkBuffer stagingBuffer;
+  VkDeviceMemory stagingMemory;
+  int textureWidth, textureHeight, textureChannels;
+  VkImage textureImage;
+  VkDeviceMemory textureImageMemory;
+  VkImageView textureImageView;
+  VkSampler textureSampler;
 
   uint32_t currentFrame = 0;
   bool orientationChanged = false;
