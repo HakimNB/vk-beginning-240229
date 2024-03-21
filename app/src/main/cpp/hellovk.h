@@ -94,11 +94,11 @@ class HelloVK {
   void pickPhysicalDevice();
   void createLogicalDeviceAndQueue();
   void createSwapChain();
-  // void createImageViews();
-  // void createRenderPass();
+  void createImageViews();
+  void createRenderPass();
   // void createDescriptorSetLayout();
   // void createGraphicsPipeline();
-  // void createFrameBuffers();
+  void createFrameBuffers();
   // void createCommandPool();
   // void createCommandBuffer();
   void createSyncObjects();
@@ -153,15 +153,15 @@ class HelloVK {
   VkFormat swapChainImageFormat;
   VkExtent2D swapChainExtent;
   VkExtent2D displaySizeIdentity;
-  // std::vector<VkImageView> swapChainImageViews;
-  // std::vector<VkFramebuffer> swapChainFrameBuffers;
+  std::vector<VkImageView> swapChainImageViews;
+  std::vector<VkFramebuffer> swapChainFrameBuffers;
   // VkCommandPool commandPool;
   // std::vector<VkCommandBuffer> commandBuffers;
 
   VkQueue graphicsQueue;
   VkQueue presentQueue;
 
-  // VkRenderPass renderPass;
+  VkRenderPass renderPass;
   // VkDescriptorSetLayout descriptorSetLayout;
   // VkPipelineLayout pipelineLayout;
   // VkPipeline graphicsPipeline;

@@ -131,14 +131,14 @@ void HelloVK::initVulkan() {
   setupDebugMessenger();
   establishDisplaySizeIdentity();
   createSwapChain();
-//   createImageViews();
-//   createRenderPass();
+  createImageViews();
+  createRenderPass();
 //   createDescriptorSetLayout();
 //   createUniformBuffers();
 //   createDescriptorPool();
 //   createDescriptorSets();
 //   createGraphicsPipeline();
-//   createFrameBuffers();
+  createFrameBuffers();
 //   createCommandPool();
 //   createCommandBuffer();
   createSyncObjects();
@@ -243,8 +243,8 @@ void HelloVK::recreateSwapChain() {
   vkDeviceWaitIdle(device);
   cleanupSwapChain();
   createSwapChain();
-  // createImageViews();
-  // createFrameBuffers();
+  createImageViews();
+  createFrameBuffers();
 }
 
 // void HelloVK::render() {
@@ -442,15 +442,15 @@ void HelloVK::recreateSwapChain() {
 
 void HelloVK::cleanupSwapChain() {
   LOGV("HelloVK::cleanupSwapChain");
-  // for (size_t i = 0; i < swapChainFrameBuffers.size(); i++) {
-  //   vkDestroyFramebuffer(device, swapChainFrameBuffers[i], nullptr);
-  // }
+  for (size_t i = 0; i < swapChainFrameBuffers.size(); i++) {
+    vkDestroyFramebuffer(device, swapChainFrameBuffers[i], nullptr);
+  }
 
-  // for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-  //   vkDestroyImageView(device, swapChainImageViews[i], nullptr);
-  // }
+  for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+    vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+  }
 
-  // vkDestroySwapchainKHR(device, swapChain, nullptr);
+  vkDestroySwapchainKHR(device, swapChain, nullptr);
 }
 
 void HelloVK::cleanup() {
@@ -863,74 +863,74 @@ void HelloVK::createSwapChain() {
   swapChainExtent = displaySizeIdentity;
 }
 
-// void HelloVK::createImageViews() {
-//   LOGV("HelloVK::createImageViews");
-//   swapChainImageViews.resize(swapChainImages.size());
+void HelloVK::createImageViews() {
+  LOGV("HelloVK::createImageViews");
+  swapChainImageViews.resize(swapChainImages.size());
 
-//   VkImageViewCreateInfo createInfo{};
-//   createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-//   createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-//   createInfo.format = swapChainImageFormat;
-//   createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-//   createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-//   createInfo.subresourceRange.baseMipLevel = 0;
-//   createInfo.subresourceRange.levelCount = 1;
-//   createInfo.subresourceRange.baseArrayLayer = 0;
-//   createInfo.subresourceRange.layerCount = 1;
+  VkImageViewCreateInfo createInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  createInfo.format = swapChainImageFormat;
+  createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+  createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  createInfo.subresourceRange.baseMipLevel = 0;
+  createInfo.subresourceRange.levelCount = 1;
+  createInfo.subresourceRange.baseArrayLayer = 0;
+  createInfo.subresourceRange.layerCount = 1;
 
-//   for (size_t i = 0; i < swapChainImages.size(); i++) {
-//     createInfo.image = swapChainImages[i];
-//     VK_CHECK(vkCreateImageView(device, &createInfo, nullptr,
-//                                &swapChainImageViews[i]));
-//   }
-// }
+  for (size_t i = 0; i < swapChainImages.size(); i++) {
+    createInfo.image = swapChainImages[i];
+    VK_CHECK(vkCreateImageView(device, &createInfo, nullptr,
+                               &swapChainImageViews[i]));
+  }
+}
 
-// void HelloVK::createRenderPass() {
-//   LOGV("HelloVK::createRenderPass");
-//   VkAttachmentDescription colorAttachment{};
-//   colorAttachment.format = swapChainImageFormat;
-//   colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+void HelloVK::createRenderPass() {
+  LOGV("HelloVK::createRenderPass");
+  VkAttachmentDescription colorAttachment{};
+  colorAttachment.format = swapChainImageFormat;
+  colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
-//   colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-//   colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 
-//   colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-//   colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
-//   colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-//   colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-//   VkAttachmentReference colorAttachmentRef{};
-//   colorAttachmentRef.attachment = 0;
-//   colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+  VkAttachmentReference colorAttachmentRef{};
+  colorAttachmentRef.attachment = 0;
+  colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-//   VkSubpassDescription subpass{};
-//   subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-//   subpass.colorAttachmentCount = 1;
-//   subpass.pColorAttachments = &colorAttachmentRef;
+  VkSubpassDescription subpass{};
+  subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+  subpass.colorAttachmentCount = 1;
+  subpass.pColorAttachments = &colorAttachmentRef;
 
-//   VkSubpassDependency dependency{};
-//   dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-//   dependency.dstSubpass = 0;
-//   dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-//   dependency.srcAccessMask = 0;
-//   dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-//   dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  VkSubpassDependency dependency{};
+  dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+  dependency.dstSubpass = 0;
+  dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependency.srcAccessMask = 0;
+  dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-//   VkRenderPassCreateInfo renderPassInfo{};
-//   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-//   renderPassInfo.attachmentCount = 1;
-//   renderPassInfo.pAttachments = &colorAttachment;
-//   renderPassInfo.subpassCount = 1;
-//   renderPassInfo.pSubpasses = &subpass;
-//   renderPassInfo.dependencyCount = 1;
-//   renderPassInfo.pDependencies = &dependency;
+  VkRenderPassCreateInfo renderPassInfo{};
+  renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+  renderPassInfo.attachmentCount = 1;
+  renderPassInfo.pAttachments = &colorAttachment;
+  renderPassInfo.subpassCount = 1;
+  renderPassInfo.pSubpasses = &subpass;
+  renderPassInfo.dependencyCount = 1;
+  renderPassInfo.pDependencies = &dependency;
 
-//   VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass));
-// }
+  VK_CHECK(vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass));
+}
 
 /*
  * Creates a graphics pipeline loading a simple vertex and fragment shader, both
@@ -1100,25 +1100,25 @@ void HelloVK::createSwapChain() {
 //   return shaderModule;
 // }
 
-// void HelloVK::createFrameBuffers() {
-//   LOGV("HelloVK::createFrameBuffers");
-//   swapChainFrameBuffers.resize(swapChainImageViews.size());
-//   for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-//     VkImageView attachments[] = {swapChainImageViews[i]};
+void HelloVK::createFrameBuffers() {
+  LOGV("HelloVK::createFrameBuffers");
+  swapChainFrameBuffers.resize(swapChainImageViews.size());
+  for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+    VkImageView attachments[] = {swapChainImageViews[i]};
 
-//     VkFramebufferCreateInfo framebufferInfo{};
-//     framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-//     framebufferInfo.renderPass = renderPass;
-//     framebufferInfo.attachmentCount = 1;
-//     framebufferInfo.pAttachments = attachments;
-//     framebufferInfo.width = swapChainExtent.width;
-//     framebufferInfo.height = swapChainExtent.height;
-//     framebufferInfo.layers = 1;
+    VkFramebufferCreateInfo framebufferInfo{};
+    framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebufferInfo.renderPass = renderPass;
+    framebufferInfo.attachmentCount = 1;
+    framebufferInfo.pAttachments = attachments;
+    framebufferInfo.width = swapChainExtent.width;
+    framebufferInfo.height = swapChainExtent.height;
+    framebufferInfo.layers = 1;
 
-//     VK_CHECK(vkCreateFramebuffer(device, &framebufferInfo, nullptr,
-//                                  &swapChainFrameBuffers[i]));
-//   }
-// }
+    VK_CHECK(vkCreateFramebuffer(device, &framebufferInfo, nullptr,
+                                 &swapChainFrameBuffers[i]));
+  }
+}
 
 // void HelloVK::createCommandPool() {
 //   LOGV("HelloVK::createCommandPool");
