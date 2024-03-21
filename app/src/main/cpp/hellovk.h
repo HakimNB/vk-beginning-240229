@@ -436,6 +436,9 @@ void HelloVK::recreateSwapChain() {
 }
 
 void HelloVK::render() {
+  if (!initialized) {
+    return;
+  }
   if (orientationChanged) {
     onOrientationChange();
   }
@@ -586,11 +589,13 @@ void HelloVK::createDescriptorSets() {
 }
 
 void HelloVK::updateUniformBuffer(uint32_t currentImage) {
-  SwapChainSupportDetails swapChainSupport =
-      querySwapChainSupport(physicalDevice);
+  VkSurfaceCapabilitiesKHR capabilities{};
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface,
+                                            &capabilities);
+
   UniformBufferObject ubo{};
   float ratio = (float)swapChainExtent.width / (float)swapChainExtent.height; 
-  getPrerotationMatrix(swapChainSupport.capabilities, pretransformFlag,
+  getPrerotationMatrix(capabilities, pretransformFlag,
                        ubo.mvp, ratio);
   void *data;
   vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0,
@@ -666,6 +671,10 @@ void HelloVK::cleanup() {
   vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 
   vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
+
+  vkDestroySampler(device, textureSampler, nullptr);
+  vkDestroyImageView(device, textureImageView, nullptr);
+  vkDestroyImage(device, textureImage, nullptr);
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
     vkDestroyBuffer(device, uniformBuffers[i], nullptr);
@@ -1100,7 +1109,7 @@ void HelloVK::createTextureImage() {
   imageInfo.extent.depth = 1;
   imageInfo.mipLevels = 1;
   imageInfo.arrayLayers = 1;
-  imageInfo.format = VK_FORMAT_R8G8B8_UNORM;
+  imageInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
   imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
   imageInfo.usage =
@@ -1132,11 +1141,17 @@ void HelloVK::decodeImage() {
       return;
   }
 
+  // Make sure we have an alpha channel, not all hardware can do linear filtering of RGB888.
+  const int requiredChannels = 4;
   unsigned char* decodedData = stbi_load_from_memory(imageData.data(),
-      imageData.size(), &textureWidth, &textureHeight, &textureChannels, 0);
+      imageData.size(), &textureWidth, &textureHeight, &textureChannels, requiredChannels);
   if (decodedData == nullptr) {
       LOGE("Fail to load image to memory, %s", stbi_failure_reason());
       return;
+  }
+
+  if (textureChannels != requiredChannels) {
+    textureChannels = requiredChannels;
   }
 
   size_t imageSize = textureWidth * textureHeight * textureChannels;
@@ -1243,7 +1258,7 @@ void HelloVK::createTextureImageViews() {
   createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   createInfo.image = textureImage;
   createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-  createInfo.format = VK_FORMAT_R8G8B8_UNORM;
+  createInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
   createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
   createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
   createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
