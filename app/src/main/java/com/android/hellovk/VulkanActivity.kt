@@ -17,10 +17,13 @@
 package com.android.hellovk
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager.LayoutParams
 import androidx.core.view.WindowInsetsCompat
@@ -54,6 +57,35 @@ class VulkanActivity : GameActivity() {
         controller.hide(WindowInsetsCompat.Type.displayCutout())
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        super.dispatchTouchEvent(ev)
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            samplePrintoutDisplayCutout(ev)
+        }
+        return true
+    }
+
+    private fun samplePrintoutDisplayCutout(ev: MotionEvent) {
+        val windowInsets = this.window.decorView.rootWindowInsets
+        if ( windowInsets != null ) {
+            if ( windowInsets.displayCutout != null ) {
+                val topRect = windowInsets.displayCutout!!.boundingRectTop
+                val leftRect = windowInsets.displayCutout!!.boundingRectLeft
+                val rightRect = windowInsets.displayCutout!!.boundingRectRight
+                val bottomRect = windowInsets.displayCutout!!.boundingRectBottom
+                Log.d("MainActivity", "displayCutout TOP: " + topRect.toString())
+                Log.d("MainActivity", "displayCutout TOP LEFT: " + topRect.left + " TOP: " + topRect.top + " RIGHT: " + topRect.right + " BOTTOM: " + topRect.bottom)
+                Log.d("MainActivity", "displayCutout LEFT: " + leftRect.toString())
+                Log.d("MainActivity", "displayCutout RIGHT: " + rightRect.toString())
+                Log.d("MainActivity", "displayCutout BOTTOM: " + bottomRect.toString())
+            } else {
+                Log.d("MainActivity", "displayCutout is null")
+            }
+        } else {
+            Log.d("MainActivity", "windowInsets is null")
+        }
     }
 
     // Filter out back button press, and handle it here after native
